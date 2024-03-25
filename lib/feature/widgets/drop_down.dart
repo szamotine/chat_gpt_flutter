@@ -15,7 +15,7 @@ class _ModelDropDownWidgetState extends State<ModelDropDownWidget> {
   Widget build(BuildContext context) {
     return DropdownButton(
       dropdownColor: kScaffoldBackgroundColor,
-      items: ModelsItem,
+      items: modelsItem,
       value: currentModel,
       onChanged: (value) {
         setState(() {

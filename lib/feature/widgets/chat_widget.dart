@@ -35,7 +35,7 @@ class ChatWidget extends StatelessWidget {
                 ),
                 chatIndex == 0
                     ? const SizedBox.shrink()
-                    : Row(
+                    : const Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         mainAxisSize: MainAxisSize.min,
                         children: [

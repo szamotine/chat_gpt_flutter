@@ -1,6 +1,6 @@
 import 'package:chat_gpt/data/asset_manager.dart';
 import 'package:chat_gpt/data/constants.dart';
-import 'package:chat_gpt/domain/showModal.dart';
+import 'package:chat_gpt/domain/show_modal.dart';
 import 'package:chat_gpt/feature/widgets/chat_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';

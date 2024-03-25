@@ -42,7 +42,7 @@ const List<String> models = [
   'Model6',
 ];
 
-List<DropdownMenuItem<String>>? get ModelsItem {
+List<DropdownMenuItem<String>>? get modelsItem {
   List<DropdownMenuItem<String>>? modelsItems = List<DropdownMenuItem<String>>.generate(
       models.length,
       (index) => DropdownMenuItem(
