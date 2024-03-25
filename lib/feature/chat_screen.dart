@@ -1,5 +1,6 @@
 import 'package:chat_gpt/data/asset_manager.dart';
 import 'package:chat_gpt/data/constants.dart';
+import 'package:chat_gpt/domain/api_services/openai_api.dart';
 import 'package:chat_gpt/domain/show_modal.dart';
 import 'package:chat_gpt/feature/widgets/chat_widget.dart';
 import 'package:flutter/material.dart';
@@ -94,9 +95,12 @@ class _ChatScreenState extends State<ChatScreen> {
                           },
                         ),
                       ),
-                      const Icon(
-                        Icons.send,
+                      IconButton(
+                        icon: const Icon(Icons.send),
                         color: Colors.white,
+                        onPressed: () async {
+                          await OpenAiAPI.getModels();
+                        },
                       ),
                     ],
                   ),
