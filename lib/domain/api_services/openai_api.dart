@@ -32,12 +32,14 @@ class OpenAiAPI {
     }
   }
 
-  static void printModels() {
+  /// Todo: to be removed when finished testing.
+  static void debugPrintModels() {
     for (var item in models) {
       debugPrint(item);
     }
   }
 
+  /// Converts http response to ChatGptModelResponse.
   static void parseModelResponse(Response response) {
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
@@ -49,10 +51,11 @@ class OpenAiAPI {
 
     models = parsedResponse.extractModelList();
 
-    printModels();
+    debugPrintModels();
   }
 }
 
+/// Class that handles potential errors from API communicating with OpenAi services.
 class OpenAiAPIErrors {
   static const List<String> errorList = ['error'];
 
