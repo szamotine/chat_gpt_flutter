@@ -54,7 +54,8 @@ class _ChatScreenState extends State<ChatScreen> {
               ))
         ],
       ),
-      body: SafeArea(
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
             Flexible(
