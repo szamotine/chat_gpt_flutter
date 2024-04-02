@@ -1,6 +1,6 @@
 class AssetsManager {
-  static String imagePath = "assets/images";
-  static String personImagePath = "$imagePath/person.png";
-  static String chatLogoImagePath = "$imagePath/chat_logo.png";
-  static String openaiLogoImagePath = "$imagePath/openai_logo.jpg";
+  static const imagePath = "assets/images";
+  static const personImagePath = "$imagePath/person.png";
+  static const chatLogoImagePath = "$imagePath/chat_logo.png";
+  static const openaiLogoImagePath = "$imagePath/openai_logo.jpg";
 }
