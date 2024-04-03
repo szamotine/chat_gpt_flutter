@@ -13,7 +13,6 @@ class OpenAiAPI {
   static const className = "OpenAiAPI";
   static const baseUrl = 'api.openai.com';
   static const version = '/v1/models';
-  static List<String> models = [];
 
   /// Retrieves available models from OpenAI
   static Future<List<String>> getModels() async {
@@ -34,13 +33,6 @@ class OpenAiAPI {
     return modelList;
   }
 
-  /// Todo: to be removed when finished testing.
-  static void debugPrintModels() {
-    for (var item in models) {
-      debugPrint(item);
-    }
-  }
-
   /// Converts http response to ChatGptModelResponse.
   static List<String> parseModelResponse(Response response) {
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
@@ -52,8 +44,6 @@ class OpenAiAPI {
     var parsedResponse = ChatGptModelResponse.fromJson(jsonResponse);
 
     return parsedResponse.extractModelList();
-
-    debugPrintModels();
   }
 }
 
