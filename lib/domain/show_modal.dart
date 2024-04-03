@@ -22,7 +22,7 @@ class ShowModal {
                   fontSize: 16,
                 ),
               ),
-              Flexible(flex: 2, child: ModelDropDownWidget()),
+              Flexible(flex: 2, child: ModelDropDownWidget2()),
             ],
           ),
         );

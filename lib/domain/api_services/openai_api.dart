@@ -16,7 +16,9 @@ class OpenAiAPI {
   static List<String> models = [];
 
   /// Retrieves available models from OpenAI
-  static Future<void> getModels() async {
+  static Future<List<String>> getModels() async {
+    List<String> modelList = [];
+
     try {
       String openAIApiKey = Env.myApiKey;
       String header1 = "Authorization";
@@ -25,11 +27,11 @@ class OpenAiAPI {
       var url = Uri.https(baseUrl, version);
 
       var response = await http.get(url, headers: {header1: header1Key});
-
-      parseModelResponse(response);
+      modelList = parseModelResponse(response);
     } catch (error) {
       debugPrint('Error in $className: ${error.toString()}');
     }
+    return modelList;
   }
 
   /// Todo: to be removed when finished testing.
@@ -40,7 +42,7 @@ class OpenAiAPI {
   }
 
   /// Converts http response to ChatGptModelResponse.
-  static void parseModelResponse(Response response) {
+  static List<String> parseModelResponse(Response response) {
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
     if (OpenAiAPIErrors.containsError(jsonResponse)) {
@@ -49,7 +51,7 @@ class OpenAiAPI {
 
     var parsedResponse = ChatGptModelResponse.fromJson(jsonResponse);
 
-    models = parsedResponse.extractModelList();
+    return parsedResponse.extractModelList();
 
     debugPrintModels();
   }
