@@ -1,10 +1,9 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:chat_gpt/data/chat_gpt_model_response.dart';
 import 'package:chat_gpt/data/env.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
@@ -28,7 +27,7 @@ class OpenAiAPI {
       var response = await http.get(url, headers: {header1: header1Key});
       modelList = parseModelResponse(response);
     } catch (error) {
-      debugPrint('Error in $className: ${error.toString()}');
+      developer.log('Error in $className: ${error.toString()}');
     }
     return modelList;
   }
