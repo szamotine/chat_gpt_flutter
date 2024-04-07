@@ -45,13 +45,14 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         actions: [
           IconButton(
-              onPressed: () async {
-                await ShowModal.showModalSheet(context: context);
-              },
-              icon: const Icon(
-                Icons.more_horiz_outlined,
-                color: Colors.white,
-              ))
+            onPressed: () async {
+              await ShowModal.showModalSheet(context: context);
+            },
+            icon: const Icon(
+              Icons.more_horiz_outlined,
+              color: Colors.white,
+            ),
+          )
         ],
       ),
       body: Padding(
