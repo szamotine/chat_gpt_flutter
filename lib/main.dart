@@ -1,5 +1,7 @@
+import 'package:chat_gpt/domain/providers/models_provider.dart';
 import 'package:chat_gpt/feature/chat_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'data/constants.dart';
 
@@ -13,15 +15,22 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        scaffoldBackgroundColor: kScaffoldBackgroundColor,
-        appBarTheme: const AppBarTheme(color: kCardColor),
-        useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => ModelsProvider(),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          scaffoldBackgroundColor: kScaffoldBackgroundColor,
+          appBarTheme: const AppBarTheme(color: kCardColor),
+          useMaterial3: true,
+        ),
+        home: const SafeArea(child: ChatScreen()),
       ),
-      home: const SafeArea(child: ChatScreen()),
     );
   }
 }

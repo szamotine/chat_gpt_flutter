@@ -1,7 +1,8 @@
 import 'package:chat_gpt/data/constants.dart';
-import 'package:chat_gpt/domain/api_services/openai_api.dart';
+import 'package:chat_gpt/domain/providers/models_provider.dart';
 import 'package:chat_gpt/feature/widgets/text_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ModelDropDownWidget extends StatefulWidget {
   const ModelDropDownWidget({super.key});
@@ -36,12 +37,15 @@ class ModelDropDownWidget2 extends StatefulWidget {
 }
 
 class _ModelDropDownWidget2State extends State<ModelDropDownWidget2> {
-  String currentModel = "gpt-3.5-turbo";
+  String? currentModel; // = "gpt-3.5-turbo";
 
   @override
   Widget build(BuildContext context) {
+    final ModelsProvider modelsProvider = Provider.of<ModelsProvider>(context, listen: false);
+    currentModel = modelsProvider.getCurrentModel;
+
     return FutureBuilder(
-        future: OpenAiAPI.getModels(),
+        future: modelsProvider.getAllModels(), //OpenAiAPI.getModels(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
@@ -65,7 +69,8 @@ class _ModelDropDownWidget2State extends State<ModelDropDownWidget2> {
                   value: currentModel,
                   onChanged: (value) {
                     setState(() {
-                      currentModel = value.toString();
+                      //currentModel = value.toString();
+                      modelsProvider.setCurrentModel(value.toString());
                     });
                   },
                 );
