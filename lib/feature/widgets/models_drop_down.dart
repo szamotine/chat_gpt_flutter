@@ -72,7 +72,6 @@ class _ModelDropDownWidget2State extends State<ModelDropDownWidget2> {
                 onChanged: (value) {
                   setState(
                     () {
-                      //currentModel = value.toString();
                       modelsProvider.setCurrentModel(value.toString());
                     },
                   );
