@@ -45,35 +45,40 @@ class _ModelDropDownWidget2State extends State<ModelDropDownWidget2> {
     currentModel = modelsProvider.getCurrentModel;
 
     return FutureBuilder(
-        future: modelsProvider.getAllModels(), //OpenAiAPI.getModels(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: TextWidget(
-                label: snapshot.error.toString(),
-              ),
-            );
-          }
-          return snapshot.data == null || snapshot.data!.isEmpty
-              ? const SizedBox.shrink()
-              : DropdownButton(
-                  dropdownColor: kScaffoldBackgroundColor,
-                  items: List<DropdownMenuItem<String>>.generate(
-                      snapshot.data!.length,
-                      (index) => DropdownMenuItem(
-                          value: snapshot.data![index],
-                          child: TextWidget(
-                            label: snapshot.data![index],
-                            fontSize: 15,
-                          ))),
-                  value: currentModel,
-                  onChanged: (value) {
-                    setState(() {
+      future: modelsProvider.getAllModels(), //OpenAiAPI.getModels(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: TextWidget(
+              label: snapshot.error.toString(),
+            ),
+          );
+        }
+        return snapshot.data == null || snapshot.data!.isEmpty
+            ? const SizedBox.shrink()
+            : DropdownButton(
+                dropdownColor: kScaffoldBackgroundColor,
+                items: List<DropdownMenuItem<String>>.generate(
+                  snapshot.data!.length,
+                  (index) => DropdownMenuItem(
+                    value: snapshot.data![index],
+                    child: TextWidget(
+                      label: snapshot.data![index],
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                value: currentModel,
+                onChanged: (value) {
+                  setState(
+                    () {
                       //currentModel = value.toString();
                       modelsProvider.setCurrentModel(value.toString());
-                    });
-                  },
-                );
-        });
+                    },
+                  );
+                },
+              );
+      },
+    );
   }
 }
