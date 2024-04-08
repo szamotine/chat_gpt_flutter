@@ -101,7 +101,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         icon: const Icon(Icons.send),
                         color: Colors.white,
                         onPressed: () async {
-                          await OpenAiAPI.getModels();
+                          await OpenAiAPI.sendTextRequest(input: "What is flutter?", model: "");
                         },
                       ),
                     ],
