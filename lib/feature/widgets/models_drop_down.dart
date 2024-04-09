@@ -12,32 +12,7 @@ class ModelDropDownWidget extends StatefulWidget {
 }
 
 class _ModelDropDownWidgetState extends State<ModelDropDownWidget> {
-  String currentModel = "Model1";
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton(
-      dropdownColor: kScaffoldBackgroundColor,
-      items: modelsItem,
-      value: currentModel,
-      onChanged: (value) {
-        setState(() {
-          currentModel = value.toString();
-        });
-      },
-    );
-  }
-}
-
-class ModelDropDownWidget2 extends StatefulWidget {
-  const ModelDropDownWidget2({super.key});
-
-  @override
-  State<ModelDropDownWidget2> createState() => _ModelDropDownWidget2State();
-}
-
-class _ModelDropDownWidget2State extends State<ModelDropDownWidget2> {
-  String? currentModel; // = "gpt-3.5-turbo";
+  String? currentModel;
 
   @override
   Widget build(BuildContext context) {

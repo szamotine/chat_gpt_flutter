@@ -1,4 +1,5 @@
 import 'package:chat_gpt/data/asset_manager.dart';
+import 'package:chat_gpt/data/chat_model.dart';
 import 'package:chat_gpt/data/constants.dart';
 import 'package:chat_gpt/domain/api_services/openai_api.dart';
 import 'package:chat_gpt/domain/show_modal.dart';
@@ -17,6 +18,7 @@ class _ChatScreenState extends State<ChatScreen> {
   late bool _isTyping = false;
   late TextEditingController textEditingController;
   static const TextStyle chatTextStyle = TextStyle(color: Colors.white, fontSize: 20);
+  late List<ChatModel> chatList = [ChatModel(message: 'Welcome to ChatGpt', chatIndex: 1)];
 
   @override
   void initState() {
@@ -61,11 +63,11 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Flexible(
               child: ListView.builder(
-                itemCount: 6,
+                itemCount: chatList.length,
                 itemBuilder: (context, index) {
                   return ChatWidget(
-                    message: chatMessages[index]['msg'].toString(),
-                    chatIndex: int.parse(chatMessages[index]['chatIndex'].toString()),
+                    message: chatList[index].message, // chatMessages[index]['msg'].toString(),
+                    chatIndex: chatList[index].chatIndex, //int.parse(chatMessages[index]['chatIndex'].toString()),
                   );
                 },
               ),
@@ -102,13 +104,16 @@ class _ChatScreenState extends State<ChatScreen> {
                       icon: const Icon(Icons.send),
                       color: Colors.white,
                       onPressed: () async {
+                        final input = textEditingController.text;
                         setState(() {
+                          textEditingController.clear();
                           _isTyping = true;
+                          chatList.add(ChatModel(message: input, chatIndex: 0));
                         });
-                        await OpenAiAPI.sendTextRequest(input: textEditingController.text, model: "");
+                        var chatItem = await OpenAiAPI.sendTextRequest(input: input, model: "");
+                        chatList.add(chatItem);
                         setState(() {
                           _isTyping = false;
-                          textEditingController.clear();
                         });
                       },
                     ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:chat_gpt/data/chat_model.dart';
 import 'package:chat_gpt/data/env.dart';
 import 'package:chat_gpt/domain/api_services/open_ai_parser.dart';
 import 'package:http/http.dart' as http;
@@ -43,8 +44,8 @@ class OpenAiAPI {
     return modelList;
   }
 
-  static Future<String> sendTextRequest({required String input, String? model}) async {
-    String message = '';
+  static Future<ChatModel> sendTextRequest({required String input, String? model}) async {
+    ChatModel chatResponse = ChatModel(message: '', chatIndex: 1);
     try {
       var url = OpenAiAPIHelper.getUrl(completionsUrl);
 
@@ -67,11 +68,11 @@ class OpenAiAPI {
             contentHeader: contentHeaderKey,
           },
           body: body);
-      message = OpenAiParser.parseTextResponse(response);
+      chatResponse = OpenAiParser.parseTextResponse(response);
     } catch (error) {
       OpenAiAPIHelper.logError(className, error.toString());
     }
 
-    return message;
+    return chatResponse;
   }
 }
