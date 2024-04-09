@@ -2,10 +2,12 @@ import 'package:chat_gpt/data/asset_manager.dart';
 import 'package:chat_gpt/data/chat_model.dart';
 import 'package:chat_gpt/data/constants.dart';
 import 'package:chat_gpt/domain/api_services/openai_api.dart';
+import 'package:chat_gpt/domain/providers/models_provider.dart';
 import 'package:chat_gpt/domain/show_modal.dart';
 import 'package:chat_gpt/feature/widgets/chat_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -19,21 +21,26 @@ class _ChatScreenState extends State<ChatScreen> {
   late TextEditingController textEditingController;
   static const TextStyle chatTextStyle = TextStyle(color: Colors.white, fontSize: 20);
   late List<ChatModel> chatList = [ChatModel(message: 'Welcome to ChatGpt', chatIndex: 1)];
+  late FocusNode focusNode;
 
   @override
   void initState() {
     textEditingController = TextEditingController();
+    focusNode = FocusNode();
     super.initState();
   }
 
   @override
   void dispose() {
     textEditingController.dispose();
+    focusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final ModelsProvider modelsProvider = Provider.of<ModelsProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         elevation: 2.0,
@@ -48,7 +55,7 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           IconButton(
             onPressed: () async {
-              await ShowModal.showModalSheet(context: context);
+              await ShowModal.showModalSheet(context: context, provider: modelsProvider);
             },
             icon: const Icon(
               Icons.more_horiz_outlined,
@@ -89,32 +96,23 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: [
                     Expanded(
                       child: TextField(
+                        focusNode: focusNode,
                         style: chatTextStyle,
                         controller: textEditingController,
                         decoration: const InputDecoration.collapsed(
                           hintText: "How can I help you?",
                           hintStyle: TextStyle(color: Colors.grey, fontSize: 25),
                         ),
-                        // onSubmitted: (value) {
-                        //   /// TODO: function to send message
-                        // },
+                        onSubmitted: (value) async {
+                          await sendMessage(modelsProvider: modelsProvider);
+                        },
                       ),
                     ),
                     IconButton(
                       icon: const Icon(Icons.send),
                       color: Colors.white,
                       onPressed: () async {
-                        final input = textEditingController.text;
-                        setState(() {
-                          textEditingController.clear();
-                          _isTyping = true;
-                          chatList.add(ChatModel(message: input, chatIndex: 0));
-                        });
-                        var chatItem = await OpenAiAPI.sendTextRequest(input: input, model: "");
-                        chatList.add(chatItem);
-                        setState(() {
-                          _isTyping = false;
-                        });
+                        await sendMessage(modelsProvider: modelsProvider);
                       },
                     ),
                   ],
@@ -125,5 +123,20 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> sendMessage({required ModelsProvider modelsProvider}) async {
+    final input = textEditingController.text;
+    setState(() {
+      textEditingController.clear();
+      _isTyping = true;
+      chatList.add(ChatModel(message: input, chatIndex: 0));
+      focusNode.unfocus();
+    });
+    var chatItem = await OpenAiAPI.sendTextRequest(input: input, model: "");
+    chatList.add(chatItem);
+    setState(() {
+      _isTyping = false;
+    });
   }
 }
