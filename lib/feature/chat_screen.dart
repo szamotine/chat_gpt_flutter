@@ -22,11 +22,13 @@ class _ChatScreenState extends State<ChatScreen> {
   static const TextStyle chatTextStyle = TextStyle(color: Colors.white, fontSize: 20);
   late List<ChatModel> chatList = [ChatModel(message: 'Welcome to ChatGpt', chatIndex: 1)];
   late FocusNode focusNode;
+  late ScrollController chatListScrollController;
 
   @override
   void initState() {
     textEditingController = TextEditingController();
     focusNode = FocusNode();
+    chatListScrollController = ScrollController();
     super.initState();
   }
 
@@ -34,6 +36,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     textEditingController.dispose();
     focusNode.dispose();
+    chatListScrollController.dispose();
     super.dispose();
   }
 
@@ -70,6 +73,7 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Flexible(
               child: ListView.builder(
+                controller: chatListScrollController,
                 itemCount: chatList.length,
                 itemBuilder: (context, index) {
                   return ChatWidget(
@@ -113,6 +117,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       color: Colors.white,
                       onPressed: () async {
                         await sendMessage(modelsProvider: modelsProvider);
+                        scrollChatListToEnd();
                       },
                     ),
                   ],
@@ -131,12 +136,25 @@ class _ChatScreenState extends State<ChatScreen> {
       textEditingController.clear();
       _isTyping = true;
       chatList.add(ChatModel(message: input, chatIndex: 0));
+      scrollChatListToEnd();
       focusNode.unfocus();
     });
+
     var chatItem = await OpenAiAPI.sendTextRequest(input: input, model: "");
+
+    debugPrint(chatItem.message);
     chatList.add(chatItem);
     setState(() {
       _isTyping = false;
+      scrollChatListToEnd();
     });
+  }
+
+  void scrollChatListToEnd() {
+    chatListScrollController.animateTo(
+      chatListScrollController.position.maxScrollExtent + 40,
+      duration: const Duration(seconds: 1),
+      curve: Curves.linear,
+    );
   }
 }
