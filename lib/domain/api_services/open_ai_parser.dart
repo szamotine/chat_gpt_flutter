@@ -11,7 +11,7 @@ import 'open_ai_api_errors.dart';
 class OpenAiParser {
   /// Converts http response to ChatGptModelResponse.
   static List<String> parseModelResponse(Response response) {
-    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    Map<String, dynamic> jsonResponse = decodeJsonInternational(response);
 
     if (OpenAiAPIErrors.containsError(jsonResponse)) {
       throw HttpException(jsonResponse['error']['message']);
@@ -24,7 +24,7 @@ class OpenAiParser {
 
   static ChatModel parseTextResponse(Response response) {
     ChatModel chatResponse;
-    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    Map<String, dynamic> jsonResponse = decodeJsonInternational(response);
 
     if (OpenAiAPIErrors.containsError(jsonResponse)) {
       throw HttpException(jsonResponse['error']['message']);
@@ -41,5 +41,9 @@ class OpenAiParser {
     }
 
     return chatResponse;
+  }
+
+  static Map<String, dynamic> decodeJsonInternational(Response response) {
+    return jsonDecode(utf8.decode(response.bodyBytes));
   }
 }

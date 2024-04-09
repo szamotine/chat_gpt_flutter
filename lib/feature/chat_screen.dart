@@ -2,9 +2,11 @@ import 'package:chat_gpt/data/asset_manager.dart';
 import 'package:chat_gpt/data/chat_model.dart';
 import 'package:chat_gpt/data/constants.dart';
 import 'package:chat_gpt/domain/api_services/openai_api.dart';
+import 'package:chat_gpt/domain/providers/chat_provider.dart';
 import 'package:chat_gpt/domain/providers/models_provider.dart';
 import 'package:chat_gpt/domain/show_modal.dart';
 import 'package:chat_gpt/feature/widgets/chat_widget.dart';
+import 'package:chat_gpt/feature/widgets/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +22,7 @@ class _ChatScreenState extends State<ChatScreen> {
   late bool _isTyping = false;
   late TextEditingController textEditingController;
   static const TextStyle chatTextStyle = TextStyle(color: Colors.white, fontSize: 20);
-  late List<ChatModel> chatList = [ChatModel(message: 'Welcome to ChatGpt', chatIndex: 1)];
+  // late List<ChatModel> chatList = [ChatModel(message: 'Welcome to ChatGpt', chatIndex: 1)];
   late FocusNode focusNode;
   late ScrollController chatListScrollController;
 
@@ -43,6 +45,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final ModelsProvider modelsProvider = Provider.of<ModelsProvider>(context, listen: false);
+    final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -74,11 +77,11 @@ class _ChatScreenState extends State<ChatScreen> {
             Flexible(
               child: ListView.builder(
                 controller: chatListScrollController,
-                itemCount: chatList.length,
+                itemCount: chatProvider.getChatList.length,
                 itemBuilder: (context, index) {
                   return ChatWidget(
-                    message: chatList[index].message, // chatMessages[index]['msg'].toString(),
-                    chatIndex: chatList[index].chatIndex, //int.parse(chatMessages[index]['chatIndex'].toString()),
+                    message: chatProvider.getChatList[index].message, // chatMessages[index]['msg'].toString(),
+                    chatIndex: chatProvider.getChatList[index].chatIndex, //int.parse(chatMessages[index]['chatIndex'].toString()),
                   );
                 },
               ),
@@ -108,7 +111,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           hintStyle: TextStyle(color: Colors.grey, fontSize: 25),
                         ),
                         onSubmitted: (value) async {
-                          await sendMessage(modelsProvider: modelsProvider);
+                          await sendMessage(chatProvider: chatProvider, modelsProvider: modelsProvider);
                         },
                       ),
                     ),
@@ -116,7 +119,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       icon: const Icon(Icons.send),
                       color: Colors.white,
                       onPressed: () async {
-                        await sendMessage(modelsProvider: modelsProvider);
+                        await sendMessage(chatProvider: chatProvider, modelsProvider: modelsProvider);
                         scrollChatListToEnd();
                       },
                     ),
@@ -130,31 +133,45 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Future<void> sendMessage({required ModelsProvider modelsProvider}) async {
+  Future<void> sendMessage({required ChatProvider chatProvider, required ModelsProvider modelsProvider}) async {
     final input = textEditingController.text;
-    setState(() {
-      textEditingController.clear();
-      _isTyping = true;
-      chatList.add(ChatModel(message: input, chatIndex: 0));
-      scrollChatListToEnd();
-      focusNode.unfocus();
-    });
 
-    var chatItem = await OpenAiAPI.sendTextRequest(input: input, model: "");
+    if (input.length > 1) {
+      setState(() {
+        textEditingController.clear();
+        _isTyping = true;
+        chatProvider.addChat(chatModel: ChatModel(message: input, chatIndex: 0));
+        focusNode.unfocus();
+      });
 
-    debugPrint(chatItem.message);
-    chatList.add(chatItem);
-    setState(() {
-      _isTyping = false;
+      var chatItem = await OpenAiAPI.sendTextRequest(input: input, model: modelsProvider.getCurrentModel);
+
+      debugPrint(chatItem.message);
+      chatProvider.addChat(chatModel: chatItem);
+      setState(() {
+        _isTyping = false;
+      });
       scrollChatListToEnd();
-    });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          padding: EdgeInsets.all(30.0),
+          backgroundColor: Colors.white,
+          content: Center(
+            child: TextWidget(
+              color: Colors.red,
+              label: 'Please enter text',
+            ),
+          )));
+    }
   }
 
   void scrollChatListToEnd() {
-    chatListScrollController.animateTo(
-      chatListScrollController.position.maxScrollExtent + 40,
-      duration: const Duration(seconds: 1),
-      curve: Curves.linear,
-    );
+    setState(() {
+      chatListScrollController.animateTo(
+        chatListScrollController.position.maxScrollExtent + 40,
+        duration: const Duration(seconds: 1),
+        curve: Curves.linear,
+      );
+    });
   }
 }

@@ -13,14 +13,7 @@ class ModelsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  /// Not used -> tbd
-  List<String> modelsList = [];
-  List<String> get getModelsList {
-    return modelsList;
-  }
-
   Future<List<String>> getAllModels() async {
-    modelsList = await OpenAiAPI.getModels();
-    return modelsList;
+    return await OpenAiAPI.getModels();
   }
 }

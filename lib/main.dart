@@ -1,3 +1,4 @@
+import 'package:chat_gpt/domain/providers/chat_provider.dart';
 import 'package:chat_gpt/domain/providers/models_provider.dart';
 import 'package:chat_gpt/feature/chat_screen.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => ModelsProvider(),
         ),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
