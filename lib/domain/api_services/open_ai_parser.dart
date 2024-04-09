@@ -22,17 +22,22 @@ class OpenAiParser {
   }
 
   static String parseTextResponse(Response response) {
+    String message = '';
     Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
     if (OpenAiAPIErrors.containsError(jsonResponse)) {
       throw HttpException(jsonResponse['error']['message']);
     }
 
-    var parsedResponse = ChatGptResponse.fromJson(jsonResponse);
+    if (jsonResponse["choices"].length > 0) {
+      var parsedResponse = ChatGptResponse.fromJson(jsonResponse);
 
-    var choices = parsedResponse.choices;
+      var choices = parsedResponse.choices;
 
-    var message = choices[0].message.content;
+      message = choices[0].message.content;
+    } else {
+      throw const HttpException("json response does not contain content");
+    }
 
     return message;
   }

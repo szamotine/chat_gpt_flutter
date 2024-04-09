@@ -14,7 +14,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final bool _isTyping = true;
+  late bool _isTyping = false;
   late TextEditingController textEditingController;
   static const TextStyle chatTextStyle = TextStyle(color: Colors.white, fontSize: 20);
 
@@ -75,40 +75,47 @@ class _ChatScreenState extends State<ChatScreen> {
                 color: Colors.white,
                 size: 18,
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              Material(
-                color: kCardColor,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          style: chatTextStyle,
-                          controller: textEditingController,
-                          decoration: const InputDecoration.collapsed(
-                            hintText: "How can I help you?",
-                            hintStyle: TextStyle(color: Colors.grey, fontSize: 25),
-                          ),
-                          onSubmitted: (value) {
-                            /// TODO: function to send message
-                          },
+            ],
+            const SizedBox(
+              height: 20,
+            ),
+            Material(
+              color: kCardColor,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        style: chatTextStyle,
+                        controller: textEditingController,
+                        decoration: const InputDecoration.collapsed(
+                          hintText: "How can I help you?",
+                          hintStyle: TextStyle(color: Colors.grey, fontSize: 25),
                         ),
+                        // onSubmitted: (value) {
+                        //   /// TODO: function to send message
+                        // },
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.send),
-                        color: Colors.white,
-                        onPressed: () async {
-                          await OpenAiAPI.sendTextRequest(input: "What is flutter?", model: "");
-                        },
-                      ),
-                    ],
-                  ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.send),
+                      color: Colors.white,
+                      onPressed: () async {
+                        setState(() {
+                          _isTyping = true;
+                        });
+                        await OpenAiAPI.sendTextRequest(input: textEditingController.text, model: "");
+                        setState(() {
+                          _isTyping = false;
+                          textEditingController.clear();
+                        });
+                      },
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ],
         ),
       ),
