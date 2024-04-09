@@ -1,13 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:chat_gpt/data/chat_gpt_model_response.dart';
-import 'package:chat_gpt/data/chat_gpt_response.dart';
 import 'package:chat_gpt/data/env.dart';
+import 'package:chat_gpt/domain/api_services/open_ai_parser.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 
-import 'open_ai_api_errors.dart';
 import 'open_ai_api_helper.dart';
 
 /// Class that handles all API calls to OpenAI
@@ -40,17 +36,15 @@ class OpenAiAPI {
       var url = OpenAiAPIHelper.getUrl(modelUrl);
 
       var response = await http.get(url, headers: {authorizationHeader: authorizationHeaderKey});
-      modelList = parseModelResponse(response);
+      modelList = OpenAiParser.parseModelResponse(response);
     } catch (error) {
       OpenAiAPIHelper.logError(className, error.toString());
     }
     return modelList;
   }
 
-  static Future<void> sendTextRequest({
-    required String input,
-    String? model,
-  }) async {
+  static Future<String> sendTextRequest({required String input, String? model}) async {
+    String message = '';
     try {
       var url = OpenAiAPIHelper.getUrl(completionsUrl);
 
@@ -60,7 +54,7 @@ class OpenAiAPI {
           "messages": [
             {
               "role": "user",
-              "content": "What is flutter?",
+              "content": input,
             }
           ],
           "max_tokens": 20,
@@ -73,37 +67,10 @@ class OpenAiAPI {
             contentHeader: contentHeaderKey,
           },
           body: body);
-      parseTextResponse(response);
+      message = OpenAiParser.parseTextResponse(response);
     } catch (error) {
       OpenAiAPIHelper.logError(className, error.toString());
     }
-  }
-
-  /// Converts http response to ChatGptModelResponse.
-  static List<String> parseModelResponse(Response response) {
-    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-
-    if (OpenAiAPIErrors.containsError(jsonResponse)) {
-      throw HttpException(jsonResponse['error']['message']);
-    }
-
-    var parsedResponse = ChatGptModelResponse.fromJson(jsonResponse);
-
-    return parsedResponse.extractModelList();
-  }
-
-  static String parseTextResponse(Response response) {
-    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-
-    if (OpenAiAPIErrors.containsError(jsonResponse)) {
-      throw HttpException(jsonResponse['error']['message']);
-    }
-
-    var parsedResponse = ChatGptResponse.fromJson(jsonResponse);
-
-    var choices = parsedResponse.choices;
-
-    var message = choices[0].message.content;
 
     return message;
   }
