@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:chat_gpt/data/chat_gpt_model_response.dart';
 import 'package:chat_gpt/data/chat_gpt_response.dart';
 import 'package:chat_gpt/data/chat_model.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 import 'open_ai_api_errors.dart';
@@ -32,7 +31,6 @@ class OpenAiParser {
     }
 
     if (jsonResponse["choices"].length > 0) {
-      debugPrint(jsonResponse["choices"].length.toString());
       var parsedResponse = ChatGptResponse.fromJson(jsonResponse);
 
       var choices = parsedResponse.choices;
