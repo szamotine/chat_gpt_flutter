@@ -58,7 +58,7 @@ class OpenAiAPI {
               "content": input,
             }
           ],
-          "max_tokens": 20,
+          //"max_tokens": 20,
         },
       );
 
